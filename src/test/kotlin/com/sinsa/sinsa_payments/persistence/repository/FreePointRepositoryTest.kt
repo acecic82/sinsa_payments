@@ -19,7 +19,6 @@ import java.time.LocalDateTime
 class FreePointRepositoryTest(
     private val freePointRepository: FreePointRepository
 ) : DescribeSpec() {
-
     init {
         extensions(SpringTestExtension(SpringTestLifecycleMode.Root))
 
@@ -42,7 +41,7 @@ class FreePointRepositoryTest(
             )
         }
 
-        this.beforeSpec {
+        this.beforeTest {
             freePointListBeforeOneDay.forEach {
                 freePointRepository.save(it)
             }
@@ -70,6 +69,8 @@ class FreePointRepositoryTest(
                     val expectedResult =
                         (freePointListBeforeOneDay + freePointListBeforeTwoDay).filter { it.memberId == memberId }
                     var orderCheckItem = LocalDateTime.now().minusDays(3L)
+
+                    realResult.size shouldBe expectedResult.size
 
                     realResult.forEachIndexed{ index, it ->
                         it shouldBeIn(expectedResult)
@@ -99,6 +100,8 @@ class FreePointRepositoryTest(
                     val expectedResult = freePointListBeforeOneDay.filter { it.memberId == memberId }
                     var orderCheckItem = LocalDateTime.now().minusDays(3L)
 
+                    realResult.size shouldBe expectedResult.size
+
                     realResult.forEachIndexed{ index, it ->
                         it shouldBeIn(expectedResult)
 
@@ -125,7 +128,6 @@ class FreePointRepositoryTest(
                     }
 
                     realResult.size shouldBe 0
-
                 }
             }
         }
