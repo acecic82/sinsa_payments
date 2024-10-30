@@ -32,6 +32,8 @@ dependencies {
 	implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
 	implementation("com.querydsl:querydsl-core:5.0.0")
 	implementation("com.querydsl:querydsl-sql")
+	implementation("org.redisson:redisson-spring-boot-starter:3.23.3")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
 	kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
 	kapt("com.querydsl:querydsl-kotlin-codegen:5.0.0")
