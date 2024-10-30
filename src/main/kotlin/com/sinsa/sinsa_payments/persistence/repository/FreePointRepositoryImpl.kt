@@ -15,7 +15,7 @@ class FreePointRepositoryImpl(
     override fun findPointByMemberId(memberId: Long, expiredDateTime: LocalDateTime): List<FreePointEntity> {
         return queryFactory.select(freePointEntity)
             .from(freePointEntity)
-            .where(freePointEntity.memberId.eq(memberId).and(freePointEntity.expiredDate.loe(expiredDateTime)))
+            .where(freePointEntity.memberId.eq(memberId).and(freePointEntity.expiredDate.gt(expiredDateTime)))
             .orderBy(freePointEntity.expiredDate.asc())
             .setLockMode(LockModeType.PESSIMISTIC_READ)
             .fetch()
