@@ -14,8 +14,13 @@ data class PointPolicyEntity(
     val maxAccumulatedPoint: BigDecimal,
     val maxHeldPoint: BigDecimal
 ) {
+    fun toDomain() = PointPolicy(
+        id = this.id,
+        maxAccumulatedPoint = this.maxAccumulatedPoint,
+        maxHeldPoint = this.maxHeldPoint
+    )
     companion object {
-        fun from(pointPolicy: PointPolicy) = PointPolicy(
+        fun from(pointPolicy: PointPolicy) = PointPolicyEntity(
             id = pointPolicy.id,
             maxAccumulatedPoint = pointPolicy.maxAccumulatedPoint,
             maxHeldPoint = pointPolicy.maxHeldPoint
