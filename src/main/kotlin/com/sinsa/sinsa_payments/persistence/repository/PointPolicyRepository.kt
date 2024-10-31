@@ -1,6 +1,5 @@
 package com.sinsa.sinsa_payments.persistence.repository
 
-import com.sinsa.sinsa_payments.domain.PointPolicy
 import com.sinsa.sinsa_payments.persistence.entity.PointPolicyEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
@@ -8,5 +7,5 @@ interface PointPolicyRepository : JpaRepository<PointPolicyEntity, Long>, PointP
 }
 
 interface PointPolicyRepositoryCustom {
-
+    fun findLatestPointPolicy() : PointPolicyEntity?
 }
