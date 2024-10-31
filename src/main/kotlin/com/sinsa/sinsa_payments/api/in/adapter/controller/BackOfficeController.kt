@@ -33,4 +33,11 @@ class BackOfficeController (
     ) : SuccessResponseDTO<PointPolicyDTO> {
         return SuccessResponseDTO.success(PointPolicyDTO.from(savePointPolicyUseCase.saveMaxHeldPoint(maxHeldPoint)))
     }
+
+    @PostMapping("/day-of-expired-date")
+    fun setDayOfExpiredDate(
+        @RequestParam days: Long
+    ) : SuccessResponseDTO<PointPolicyDTO> {
+        return SuccessResponseDTO.success(PointPolicyDTO.from(savePointPolicyUseCase.saveExpiredDateOfDay(days)))
+    }
 }
