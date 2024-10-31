@@ -26,5 +26,8 @@ data class PointPolicy(
     companion object {
         const val DEFAULT_MAX_ACCUMULATED_POINT = 100_000L
         const val DEFAULT_MAX_HELD_POINT = 1_000_000L
+
+        const val REDIS_MAX_ACCUMULATED_POINT_KEY_NAME = "PointPolicyMaxAccumulatedPointKey"
+        const val REDIS_MAX_HELD_POINT_KEY_NAME = "PointPolicyMaxHeldPointKey"
     }
 }
