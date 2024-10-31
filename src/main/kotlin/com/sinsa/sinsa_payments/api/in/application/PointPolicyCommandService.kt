@@ -39,7 +39,7 @@ class PointPolicyCommandService (
             )
         }
 
-        pointPolicy.changMaxAccumulatedPoint(BigDecimal(point))
+        pointPolicy.changMaxHeldPoint(BigDecimal(point))
 
         pointPolicyCommandAdapter.save(pointPolicy)
     }
