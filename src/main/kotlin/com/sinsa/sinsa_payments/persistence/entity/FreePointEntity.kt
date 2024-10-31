@@ -17,6 +17,14 @@ data class FreePointEntity (
     val manual: Boolean,
     val expiredDate: LocalDateTime
 ) {
+    fun toDomain() = FreePoint(
+        id = this.id,
+        memberId = this.memberId,
+        point = this.point,
+        manual = this.manual,
+        expiredDate = this.expiredDate
+    )
+
     companion object {
         fun from(freePoint: FreePoint) = FreePointEntity(
             id = freePoint.id,
