@@ -31,7 +31,8 @@ class PointPolicyCommandService (
         pointPolicy.changMaxAccumulatedPoint(BigDecimal(point))
 
         val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
-        val afterSetRedis = redisService.set(PointPolicy.REDIS_MAX_ACCUMULATED_POINT_KEY_NAME, point.toString())
+        redisService.set(PointPolicy.REDIS_MAX_ACCUMULATED_POINT_KEY_NAME, point.toString())
+        val afterSetRedis = redisService.get(PointPolicy.REDIS_MAX_ACCUMULATED_POINT_KEY_NAME)
 
         require(afterSetRedis.compareTo(point.toString()) == 0) {
             throw PointPolicyException(
@@ -56,7 +57,8 @@ class PointPolicyCommandService (
         pointPolicy.changMaxHeldPoint(BigDecimal(point))
 
         val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
-        val afterSetRedis = redisService.set(PointPolicy.REDIS_MAX_HELD_POINT_KEY_NAME, point.toString())
+        redisService.set(PointPolicy.REDIS_MAX_HELD_POINT_KEY_NAME, point.toString())
+        val afterSetRedis = redisService.get(PointPolicy.REDIS_MAX_HELD_POINT_KEY_NAME)
 
         require(afterSetRedis.compareTo(point.toString()) == 0) {
             throw PointPolicyException(
@@ -81,9 +83,10 @@ class PointPolicyCommandService (
         pointPolicy.changDayOfExpiredDate(days)
 
         val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
-        val afterSetRedis = redisService.set(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME, days.toString())
+        redisService.set(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME, days.toString())
+        val afterSetRedis = redisService.get(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME)
 
-        require(afterSetRedis.compareTo(days.toString()) == 0) {
+            require(afterSetRedis.compareTo(days.toString()) == 0) {
             throw PointPolicyException(
                 ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL,
                 ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL.message
@@ -94,10 +97,6 @@ class PointPolicyCommandService (
     }
 
     private fun findLatestPointPolicy() : PointPolicy {
-        return pointPolicyInquiryAdapter.findLatestPointPolicy() ?: PointPolicy(
-            maxAccumulatedPoint = BigDecimal(PointPolicy.DEFAULT_MAX_ACCUMULATED_POINT),
-            maxHeldPoint = BigDecimal(PointPolicy.DEFAULT_MAX_HELD_POINT),
-            dayOfExpiredDate = PointPolicy.DEFAULT_DAY_OF_EXPIRED_DATE
-        )
+        return pointPolicyInquiryAdapter.findLatestPointPolicy()
     }
 }
