@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component
 class PointPolicyInquiryAdapter (
     val pointPolicyRepository: PointPolicyRepository
 ) : FindPointPolicyPort {
-    override fun findLatestPointPolicy(): PointPolicy? {
-        return pointPolicyRepository.findLatestPointPolicy()?.toDomain()
+    override fun findLatestPointPolicy(): PointPolicy {
+        return pointPolicyRepository.findLatestPointPolicy().toDomain()
     }
 
 }

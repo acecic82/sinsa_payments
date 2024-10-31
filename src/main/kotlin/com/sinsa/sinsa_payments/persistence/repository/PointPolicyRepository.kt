@@ -7,5 +7,5 @@ interface PointPolicyRepository : JpaRepository<PointPolicyEntity, Long>, PointP
 }
 
 interface PointPolicyRepositoryCustom {
-    fun findLatestPointPolicy() : PointPolicyEntity?
+    fun findLatestPointPolicy() : PointPolicyEntity
 }

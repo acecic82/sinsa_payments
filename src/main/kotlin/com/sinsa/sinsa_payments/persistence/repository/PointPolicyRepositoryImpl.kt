@@ -6,13 +6,9 @@ import com.sinsa.sinsa_payments.persistence.entity.QPointPolicyEntity.Companion.
 
 class PointPolicyRepositoryImpl : QuerydslRepositorySupport(PointPolicyEntity::class.java),
     PointPolicyRepositoryCustom {
-    override fun findLatestPointPolicy(): PointPolicyEntity? {
-        val result = from(pointPolicyEntity)
+    override fun findLatestPointPolicy(): PointPolicyEntity {
+        return from(pointPolicyEntity)
             .orderBy(pointPolicyEntity.id.desc())
-            .fetch()
-
-        if (result.isEmpty()) return null
-
-        return result[0]
+            .fetch()[0]
     }
 }
