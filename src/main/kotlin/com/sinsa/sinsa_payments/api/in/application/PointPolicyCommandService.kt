@@ -68,10 +68,36 @@ class PointPolicyCommandService (
         return pointPolicyVO
     }
 
+    override fun saveExpiredDateOfDay(days: Long): PointPolicyVO {
+        val pointPolicy = findLatestPointPolicy()
+
+        require(pointPolicy.checkValidationDayOfExpiredDate(days)) {
+            throw PointPolicyException(
+                ExceptionCode.POINT_POLICY_INVALID_DAY_OF_EXPIRED_DATE,
+                "${ExceptionCode.POINT_POLICY_INVALID_DAY_OF_EXPIRED_DATE.message}$days"
+            )
+        }
+
+        pointPolicy.changDayOfExpiredDate(days)
+
+        val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
+        val afterSetRedis = redisService.set(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME, days.toString())
+
+        require(afterSetRedis.compareTo(days.toString()) == 0) {
+            throw PointPolicyException(
+                ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL,
+                ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL.message
+            )
+        }
+
+        return pointPolicyVO
+    }
+
     private fun findLatestPointPolicy() : PointPolicy {
         return pointPolicyInquiryAdapter.findLatestPointPolicy() ?: PointPolicy(
             maxAccumulatedPoint = BigDecimal(PointPolicy.DEFAULT_MAX_ACCUMULATED_POINT),
-            maxHeldPoint = BigDecimal(PointPolicy.DEFAULT_MAX_HELD_POINT)
+            maxHeldPoint = BigDecimal(PointPolicy.DEFAULT_MAX_HELD_POINT),
+            dayOfExpiredDate = PointPolicy.DEFAULT_DAY_OF_EXPIRED_DATE
         )
     }
 }
