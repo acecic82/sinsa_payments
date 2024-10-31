@@ -14,9 +14,9 @@ class RedisServiceImp<T>(
         return bucket.get()
     }
 
-    override fun set(key: String, value: T, duration: Duration): T {
+    override fun set(key: String, value: T, duration: Duration) {
         val bucket = redissonClient.getBucket<T>(key)
-        return bucket.getAndSet(value, duration)
+        return bucket.set(value, duration)
     }
 
     override fun getRLock(key: String): RLock {
