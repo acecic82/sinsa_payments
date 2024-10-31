@@ -1,5 +1,6 @@
 package com.sinsa.sinsa_payments.api.`in`.application
 
+import com.sinsa.sinsa_payments.api.`in`.application.vo.PointPolicyVO
 import com.sinsa.sinsa_payments.api.`in`.port.SavePointPolicyUseCase
 import com.sinsa.sinsa_payments.api.out.adapter.PointPolicyCommandAdapter
 import com.sinsa.sinsa_payments.api.out.adapter.PointPolicyInquiryAdapter
@@ -13,8 +14,8 @@ import java.math.BigDecimal
 class PointPolicyCommandService (
     private val pointPolicyInquiryAdapter: PointPolicyInquiryAdapter,
     private val pointPolicyCommandAdapter: PointPolicyCommandAdapter
-) : SavePointPolicyUseCase{
-    override fun saveMaxAccumulatedPoint(point: Long) {
+) : SavePointPolicyUseCase {
+    override fun saveMaxAccumulatedPoint(point: Long) : PointPolicyVO {
         val pointPolicy = findLatestPointPolicy()
 
         require(pointPolicy.checkValidationMaxAccumulatedPoint(point)) {
@@ -26,10 +27,10 @@ class PointPolicyCommandService (
 
         pointPolicy.changMaxAccumulatedPoint(BigDecimal(point))
 
-        pointPolicyCommandAdapter.save(pointPolicy)
+        return PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
     }
 
-    override fun saveMaxHeldPoint(point: Long) {
+    override fun saveMaxHeldPoint(point: Long) : PointPolicyVO {
         val pointPolicy = findLatestPointPolicy()
 
         require(pointPolicy.checkValidationMaxHeldPoint(point)) {
@@ -41,7 +42,7 @@ class PointPolicyCommandService (
 
         pointPolicy.changMaxHeldPoint(BigDecimal(point))
 
-        pointPolicyCommandAdapter.save(pointPolicy)
+        return PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
     }
 
     private fun findLatestPointPolicy() : PointPolicy {
