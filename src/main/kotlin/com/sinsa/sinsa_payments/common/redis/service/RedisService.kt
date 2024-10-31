@@ -1,4 +1,4 @@
-package kr.co._29cm.homework.common.redis.service
+package com.sinsa.sinsa_payments.common.redis.service
 
 import org.redisson.api.RLock
 import java.time.Duration
