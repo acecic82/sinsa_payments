@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class PointPolicyCommandAdapter (
     val pointPolicyRepository: PointPolicyRepository
 ) : SavePointPolicyPort {
-    override fun save(pointPolicy: PointPolicy) {
-        pointPolicyRepository.save(PointPolicyEntity.from(pointPolicy))
+    override fun save(pointPolicy: PointPolicy) : PointPolicy {
+        return pointPolicyRepository.save(PointPolicyEntity.from(pointPolicy)).toDomain()
     }
 }
