@@ -4,17 +4,20 @@ import com.sinsa.sinsa_payments.api.`in`.application.vo.PointPolicyVO
 import com.sinsa.sinsa_payments.api.`in`.port.SavePointPolicyUseCase
 import com.sinsa.sinsa_payments.api.out.adapter.PointPolicyCommandAdapter
 import com.sinsa.sinsa_payments.api.out.adapter.PointPolicyInquiryAdapter
-import com.sinsa.sinsa_payments.domain.PointPolicy
 import com.sinsa.sinsa_payments.common.exception.PointPolicyException
 import com.sinsa.sinsa_payments.common.exception.enum.ExceptionCode
+import com.sinsa.sinsa_payments.common.redis.service.RedisService
+import com.sinsa.sinsa_payments.domain.PointPolicy
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
 class PointPolicyCommandService (
     private val pointPolicyInquiryAdapter: PointPolicyInquiryAdapter,
-    private val pointPolicyCommandAdapter: PointPolicyCommandAdapter
+    private val pointPolicyCommandAdapter: PointPolicyCommandAdapter,
+    private val redisService: RedisService<String>
 ) : SavePointPolicyUseCase {
+
     override fun saveMaxAccumulatedPoint(point: Long) : PointPolicyVO {
         val pointPolicy = findLatestPointPolicy()
 
@@ -27,7 +30,17 @@ class PointPolicyCommandService (
 
         pointPolicy.changMaxAccumulatedPoint(BigDecimal(point))
 
-        return PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
+        val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
+        val afterSetRedis = redisService.set(PointPolicy.REDIS_MAX_ACCUMULATED_POINT_KEY_NAME, point.toString())
+
+        require(afterSetRedis.compareTo(point.toString()) == 0) {
+            throw PointPolicyException(
+                ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL,
+                ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL.message
+            )
+        }
+
+        return pointPolicyVO
     }
 
     override fun saveMaxHeldPoint(point: Long) : PointPolicyVO {
@@ -42,7 +55,17 @@ class PointPolicyCommandService (
 
         pointPolicy.changMaxHeldPoint(BigDecimal(point))
 
-        return PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
+        val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
+        val afterSetRedis = redisService.set(PointPolicy.REDIS_MAX_HELD_POINT_KEY_NAME, point.toString())
+
+        require(afterSetRedis.compareTo(point.toString()) == 0) {
+            throw PointPolicyException(
+                ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL,
+                ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL.message
+            )
+        }
+
+        return pointPolicyVO
     }
 
     private fun findLatestPointPolicy() : PointPolicy {
