@@ -7,15 +7,19 @@ import java.time.LocalDateTime
 data class FreePointVO (
     val memberId: Long,
     val point: BigDecimal,
-    val manual: Boolean,
-    val expiredDate: LocalDateTime
+    val manual: Boolean
 ) {
+    fun toDomain(expiredDate: LocalDateTime) = FreePoint (
+        memberId = this.memberId,
+        point = this.point,
+        manual = this.manual,
+        expiredDate = expiredDate
+    )
     companion object {
         fun from(freePoint: FreePoint) = FreePointVO(
             memberId = freePoint.memberId,
             point = freePoint.point,
-            manual = freePoint.manual,
-            expiredDate = freePoint.expiredDate
+            manual = freePoint.manual
         )
     }
 }
