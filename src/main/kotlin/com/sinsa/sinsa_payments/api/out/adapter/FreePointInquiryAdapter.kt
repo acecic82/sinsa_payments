@@ -3,8 +3,10 @@ package com.sinsa.sinsa_payments.api.out.adapter
 import com.sinsa.sinsa_payments.api.out.port.FindFreePointPort
 import com.sinsa.sinsa_payments.domain.FreePoint
 import com.sinsa.sinsa_payments.persistence.repository.FreePointRepository
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
+@Component
 class FreePointInquiryAdapter (
     private val freePointRepository: FreePointRepository
 ) : FindFreePointPort {
