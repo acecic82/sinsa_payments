@@ -11,8 +11,12 @@ class FreePointInquiryAdapter (
     private val freePointRepository: FreePointRepository
 ) : FindFreePointPort {
     override fun findFreePointsByMemberId(memberId: Long, expiredDate: LocalDateTime): List<FreePoint> {
-        return freePointRepository.findPointByMemberId(memberId, expiredDate).map {
+        return freePointRepository.findPointByMemberIdWithLock(memberId, expiredDate).map {
             it.toDomain()
         }
+    }
+
+    override fun findByIdWithLock(pointId: Long): FreePoint? {
+        return freePointRepository.findByIdWithLock(pointId)?.toDomain()
     }
 }

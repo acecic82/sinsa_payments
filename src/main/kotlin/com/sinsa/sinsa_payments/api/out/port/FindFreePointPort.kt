@@ -5,4 +5,5 @@ import java.time.LocalDateTime
 
 interface FindFreePointPort {
     fun findFreePointsByMemberId(memberId: Long, expiredDate: LocalDateTime) : List<FreePoint>
+    fun findByIdWithLock(pointId: Long) : FreePoint?
 }

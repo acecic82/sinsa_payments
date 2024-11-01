@@ -57,7 +57,7 @@ class FreePointRepositoryTest(
                 it("과거 시간 기준으로 검색시 전체가 정렬된 결과가 나와야 한다.") {
                     val now = LocalDateTime.now().minusDays(3L)
 
-                    val realResult = freePointRepository.findPointByMemberId(memberId, now).map {
+                    val realResult = freePointRepository.findPointByMemberIdWithLock(memberId, now).map {
                         FreePointEntity(
                             it.id,
                             it.memberId,
@@ -88,7 +88,7 @@ class FreePointRepositoryTest(
                     // 저장 시점보다 현재 시점이 더 미래이기 때문에 1일전 결과만 나와야 한다.
                     val now = LocalDateTime.now().minusDays(2L)
 
-                    val realResult = freePointRepository.findPointByMemberId(memberId, now).map {
+                    val realResult = freePointRepository.findPointByMemberIdWithLock(memberId, now).map {
                         FreePointEntity(
                             it.id,
                             it.memberId,
@@ -117,7 +117,7 @@ class FreePointRepositoryTest(
                 it("결과가 없는 경우 빈 배열이 나와야한다.") {
                     val now = LocalDateTime.now()
 
-                    val realResult = freePointRepository.findPointByMemberId(memberId, now).map {
+                    val realResult = freePointRepository.findPointByMemberIdWithLock(memberId, now).map {
                         FreePointEntity(
                             it.id,
                             it.memberId,

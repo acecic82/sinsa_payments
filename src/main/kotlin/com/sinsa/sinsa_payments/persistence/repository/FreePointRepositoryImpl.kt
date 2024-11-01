@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 class FreePointRepositoryImpl(
     private val queryFactory : JPAQueryFactory
 ) : QuerydslRepositorySupport(FreePointEntity::class.java), FreePointRepositoryCustom {
-    override fun findPointByMemberId(memberId: Long, expiredDateTime: LocalDateTime): List<FreePointEntity> {
+    override fun findPointByMemberIdWithLock(memberId: Long, expiredDateTime: LocalDateTime): List<FreePointEntity> {
         return queryFactory.select(freePointEntity)
             .from(freePointEntity)
             .where(freePointEntity.memberId.eq(memberId).and(freePointEntity.expiredDate.gt(expiredDateTime).and(
@@ -21,5 +21,17 @@ class FreePointRepositoryImpl(
             .orderBy(freePointEntity.expiredDate.asc())
             .setLockMode(LockModeType.PESSIMISTIC_READ)
             .fetch()
+    }
+
+    override fun findByIdWithLock(pointId: Long): FreePointEntity? {
+        val result = queryFactory.select(freePointEntity)
+            .from(freePointEntity)
+            .where(freePointEntity.id.eq(pointId))
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+            .fetch()
+
+        if (result.isEmpty()) return null
+
+        return result[0]
     }
 }
