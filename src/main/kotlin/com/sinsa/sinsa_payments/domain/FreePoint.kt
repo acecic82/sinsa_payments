@@ -10,6 +10,9 @@ data class FreePoint(
     val manual: Boolean,
     val expiredDate: LocalDateTime = LocalDateTime.now().plusDays(DEFAULT_EXPIRED_DAY)
 ) {
+    fun usePoint(point: BigDecimal) {
+        this.point.minus(point)
+    }
 
     companion object {
         const val DEFAULT_EXPIRED_DAY = 365L
