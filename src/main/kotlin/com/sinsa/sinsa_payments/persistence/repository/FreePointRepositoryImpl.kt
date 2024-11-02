@@ -34,4 +34,19 @@ class FreePointRepositoryImpl(
 
         return result[0]
     }
+
+    override fun findPointByMemberIdAndManualWithLock(
+        memberId: Long,
+        manual: Boolean,
+        expiredDateTime: LocalDateTime
+    ): List<FreePointEntity> {
+        return queryFactory.select(freePointEntity)
+            .from(freePointEntity)
+            .where(freePointEntity.memberId.eq(memberId).and(
+                freePointEntity.manual.eq(manual)).and(freePointEntity.expiredDate.gt(expiredDateTime).and(
+                freePointEntity.point.gt(BigDecimal.ZERO))))
+            .orderBy(freePointEntity.expiredDate.asc())
+            .setLockMode(LockModeType.PESSIMISTIC_READ)
+            .fetch()
+    }
 }

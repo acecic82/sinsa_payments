@@ -12,4 +12,10 @@ interface  FreePointRepositoryCustom {
     fun findPointByMemberIdWithLock(memberId: Long, expiredDateTime: LocalDateTime): List<FreePointEntity>
 
     fun findByIdWithLock(pointId: Long) : FreePointEntity?
+
+    fun findPointByMemberIdAndManualWithLock(
+        memberId: Long,
+        manual: Boolean,
+        expiredDateTime: LocalDateTime
+    ): List<FreePointEntity>
 }
