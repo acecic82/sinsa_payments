@@ -16,6 +16,16 @@ class FreePointInquiryAdapter (
         }
     }
 
+    override fun findFreePointsByMemberIdAndManual(
+        memberId: Long,
+        manual: Boolean,
+        expiredDate: LocalDateTime
+    ): List<FreePoint> {
+        return freePointRepository.findPointByMemberIdAndManualWithLock(memberId, manual, expiredDate).map {
+            it.toDomain()
+        }
+    }
+
     override fun findByIdWithLock(pointId: Long): FreePoint? {
         return freePointRepository.findByIdWithLock(pointId)?.toDomain()
     }
