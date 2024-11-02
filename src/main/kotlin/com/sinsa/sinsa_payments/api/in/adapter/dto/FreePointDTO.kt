@@ -8,6 +8,11 @@ data class FreePointDTO(
     val point: BigDecimal,
     val manual: Boolean
 ) {
+    fun toVO() = FreePointVO(
+        memberId = this.memberId,
+        point = this.point,
+        manual = this.manual
+    )
     companion object {
         fun from(freePoint: FreePointVO) = FreePointDTO(
             memberId = freePoint.memberId,
