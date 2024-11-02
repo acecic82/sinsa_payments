@@ -27,17 +27,19 @@ class FreePointCommandService (
     @Transactional
     override fun save(freePoint: FreePointVO): FreePointVO {
         checkMaxPoint(freePoint.point)
-        val expiredDate = LocalDateTime.now()
+        val now = LocalDateTime.now()
 
-        val freePoints = freePointInquiryAdapter.findFreePointsByMemberId(freePoint.memberId, expiredDate)
+        val freePoints = freePointInquiryAdapter.findFreePointsByMemberId(freePoint.memberId, now)
         val totalHeldPoint = freePoints.sumOf { it.point }
 
         checkMaxHeldPoint(totalHeldPoint + freePoint.point)
+        val expiredDate = now.plusDays(getExpiredDateFromPolicy())
         val savedFreePoint = freePointCommandAdapter.save(freePoint.toDomain(expiredDate))
 
         freePointSnapshotCommandAdapter.save(
             FreePointSnapshot.from(
-                savedFreePoint,
+                savedFreePoint.id!!,
+                savedFreePoint.point,
                 null,
                 FreePointSnapshotStatus.ACCUMULATED
             )
@@ -47,7 +49,7 @@ class FreePointCommandService (
     }
 
     @Transactional
-    override fun cancel(pointId: Long) {
+    override fun cancel(pointId: Long) : FreePointVO {
         val snapShots = freePointSnapShotInquiryAdapter.findByPointIdWithApprovalAndCancel(pointId)
         checkValidFreePointSnapshot(snapShots)
 
@@ -56,15 +58,41 @@ class FreePointCommandService (
                 ExceptionCode.FREE_POINT_NOT_FOUND,
                 "${ExceptionCode.FREE_POINT_NOT_FOUND}$pointId"
             )
+        val targetPoint = freePoint.point
 
         // 다 사용하여 취소 처리를 한다.
-        freePoint.usePoint(freePoint.point)
+        freePoint.usePoint(targetPoint)
         val savedFreePoint = freePointCommandAdapter.save(freePoint)
 
         // snapshot 에 적립취소 상태를 저장한다.
-        freePointSnapshotCommandAdapter.save(FreePointSnapshot.from(savedFreePoint, null, FreePointSnapshotStatus.ACCUMULATED_CANCEL))
+        freePointSnapshotCommandAdapter.save(
+            FreePointSnapshot.from(
+                freePoint.id!!,
+                -targetPoint,
+                null,
+                FreePointSnapshotStatus.ACCUMULATED_CANCEL
+            )
+        )
+
+        return FreePointVO.from(savedFreePoint)
     }
 
+    private fun getExpiredDateFromPolicy() : Long {
+        var redisValue = redisService.get(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME)
+
+        if (redisValue.isNullOrBlank()) {
+            val pointPolicy = pointPolicyInquiryAdapter.findLatestPointPolicy()
+
+            redisService.set(
+                PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME,
+                pointPolicy.dayOfExpiredDate.toString()
+            )
+
+            redisValue = pointPolicy.dayOfExpiredDate.toString()
+        }
+
+        return redisValue.toLong()
+    }
 
     private fun checkValidFreePointSnapshot(snapShots : List<FreePointSnapshot>) {
         val totalPoint = snapShots.sumOf { it.point }
