@@ -6,12 +6,12 @@ import java.time.LocalDateTime
 data class FreePoint(
     val id: Long? = null,
     val memberId: Long,
-    val point: BigDecimal,
+    var point: BigDecimal,
     val manual: Boolean,
     val expiredDate: LocalDateTime = LocalDateTime.now().plusDays(DEFAULT_EXPIRED_DAY)
 ) {
     fun usePoint(point: BigDecimal) {
-        this.point.minus(point)
+        this.point = this.point.minus(point)
     }
 
     companion object {
