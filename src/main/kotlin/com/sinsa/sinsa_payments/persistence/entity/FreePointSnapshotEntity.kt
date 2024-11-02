@@ -12,6 +12,7 @@ data class FreePointSnapshotEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    val memberId: Long,
     val pointId: Long,
     val orderId: String? = null,
     val point: BigDecimal,
@@ -22,6 +23,7 @@ data class FreePointSnapshotEntity(
 ) {
     fun toDomain() = FreePointSnapshot(
         id = this.id,
+        memberId = this.memberId,
         pointId = this.pointId,
         orderId = this.orderId,
         point = this.point,
@@ -30,6 +32,7 @@ data class FreePointSnapshotEntity(
     companion object {
         fun from(freePointSnapShot: FreePointSnapshot) = FreePointSnapshotEntity(
             id = freePointSnapShot.id,
+            memberId = freePointSnapShot.memberId,
             pointId = freePointSnapShot.pointId,
             orderId = freePointSnapShot.orderId,
             point = freePointSnapShot.point,

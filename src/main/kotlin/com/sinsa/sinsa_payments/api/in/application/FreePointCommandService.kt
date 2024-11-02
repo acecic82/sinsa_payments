@@ -38,6 +38,7 @@ class FreePointCommandService (
 
         freePointSnapshotCommandAdapter.save(
             FreePointSnapshot.from(
+                savedFreePoint.memberId,
                 savedFreePoint.id!!,
                 savedFreePoint.point,
                 null,
@@ -67,6 +68,7 @@ class FreePointCommandService (
         // snapshot 에 적립취소 상태를 저장한다.
         freePointSnapshotCommandAdapter.save(
             FreePointSnapshot.from(
+                freePoint.memberId,
                 freePoint.id!!,
                 -targetPoint,
                 null,
