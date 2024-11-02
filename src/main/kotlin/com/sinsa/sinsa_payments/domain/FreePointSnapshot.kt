@@ -10,11 +10,11 @@ data class FreePointSnapshot(
     val status: FreePointSnapshotStatus
 ) {
     companion object {
-        fun from(freePoint: FreePoint, orderId: String? = null, status: FreePointSnapshotStatus) =
-            FreePointSnapshot (
-                pointId = freePoint.id!!,
+        fun from(freePointId: Long, point: BigDecimal, orderId: String? = null, status: FreePointSnapshotStatus) =
+            FreePointSnapshot(
+                pointId = freePointId,
                 orderId = orderId,
-                point = freePoint.point,
+                point = point,
                 status = status
             )
     }
