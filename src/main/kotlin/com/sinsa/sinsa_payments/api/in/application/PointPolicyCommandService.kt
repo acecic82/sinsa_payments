@@ -2,8 +2,8 @@ package com.sinsa.sinsa_payments.api.`in`.application
 
 import com.sinsa.sinsa_payments.api.`in`.application.vo.PointPolicyVO
 import com.sinsa.sinsa_payments.api.`in`.port.SavePointPolicyUseCase
-import com.sinsa.sinsa_payments.api.out.adapter.PointPolicyCommandAdapter
-import com.sinsa.sinsa_payments.api.out.adapter.PointPolicyInquiryAdapter
+import com.sinsa.sinsa_payments.api.out.port.FindPointPolicyPort
+import com.sinsa.sinsa_payments.api.out.port.SavePointPolicyPort
 import com.sinsa.sinsa_payments.common.exception.PointPolicyException
 import com.sinsa.sinsa_payments.common.exception.enum.ExceptionCode
 import com.sinsa.sinsa_payments.common.redis.service.RedisService
@@ -13,8 +13,8 @@ import java.math.BigDecimal
 
 @Service
 class PointPolicyCommandService (
-    private val pointPolicyInquiryAdapter: PointPolicyInquiryAdapter,
-    private val pointPolicyCommandAdapter: PointPolicyCommandAdapter,
+    private val findPointPolicyPort: FindPointPolicyPort,
+    private val savePointPolicyPort: SavePointPolicyPort,
     private val redisService: RedisService<String>
 ) : SavePointPolicyUseCase {
 
@@ -30,7 +30,7 @@ class PointPolicyCommandService (
 
         pointPolicy.changMaxAccumulatedPoint(BigDecimal(point))
 
-        val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
+        val pointPolicyVO = PointPolicyVO.from(savePointPolicyPort.save(pointPolicy))
         redisService.set(PointPolicy.REDIS_MAX_ACCUMULATED_POINT_KEY_NAME, point.toString())
         val afterSetRedis = redisService.get(PointPolicy.REDIS_MAX_ACCUMULATED_POINT_KEY_NAME)
 
@@ -56,7 +56,7 @@ class PointPolicyCommandService (
 
         pointPolicy.changMaxHeldPoint(BigDecimal(point))
 
-        val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
+        val pointPolicyVO = PointPolicyVO.from(savePointPolicyPort.save(pointPolicy))
         redisService.set(PointPolicy.REDIS_MAX_HELD_POINT_KEY_NAME, point.toString())
         val afterSetRedis = redisService.get(PointPolicy.REDIS_MAX_HELD_POINT_KEY_NAME)
 
@@ -82,7 +82,7 @@ class PointPolicyCommandService (
 
         pointPolicy.changDayOfExpiredDate(days)
 
-        val pointPolicyVO = PointPolicyVO.from(pointPolicyCommandAdapter.save(pointPolicy))
+        val pointPolicyVO = PointPolicyVO.from(savePointPolicyPort.save(pointPolicy))
         redisService.set(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME, days.toString())
         val afterSetRedis = redisService.get(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME)
 
@@ -97,6 +97,6 @@ class PointPolicyCommandService (
     }
 
     private fun findLatestPointPolicy() : PointPolicy {
-        return pointPolicyInquiryAdapter.findLatestPointPolicy()
+        return findPointPolicyPort.findLatestPointPolicy()
     }
 }
