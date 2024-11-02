@@ -1,6 +1,8 @@
 package com.sinsa.sinsa_payments.api.`in`.adapter.controller
 
 import com.sinsa.sinsa_payments.api.`in`.adapter.dto.FreePointDTO
+import com.sinsa.sinsa_payments.api.`in`.adapter.dto.FreePointUseDTO
+import com.sinsa.sinsa_payments.api.`in`.port.SaveFreePointSnapshotUseCase
 import com.sinsa.sinsa_payments.api.`in`.port.SaveFreePointUseCase
 import com.sinsa.sinsa_payments.common.dto.SuccessResponseDTO
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/free-point")
 class FreePointCommandController(
-    private val saveFreePointUseCase: SaveFreePointUseCase
+    private val saveFreePointUseCase: SaveFreePointUseCase,
+    private val saveFreePointSnapshotUseCase: SaveFreePointSnapshotUseCase
 ) {
 
     @PostMapping("/save")
@@ -27,5 +30,13 @@ class FreePointCommandController(
         @RequestParam pointId: Long
     ) : SuccessResponseDTO<FreePointDTO> {
         return SuccessResponseDTO.success(FreePointDTO.from(saveFreePointUseCase.cancel(pointId)))
+    }
+
+    @PostMapping("/use")
+    fun use(
+        @RequestBody freePointUseDTO : FreePointUseDTO
+    ) : SuccessResponseDTO<Boolean> {
+        saveFreePointSnapshotUseCase.save(freePointUseDTO.toVO())
+        return SuccessResponseDTO.success(true)
     }
 }
