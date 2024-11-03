@@ -9,5 +9,7 @@ interface FreePointSnapshotRepository : JpaRepository<FreePointSnapshotEntity, L
 interface  FreePointSnapshotRepositoryCustom {
     fun findByPointId(pointId: Long) : List<FreePointSnapshotEntity>
 
-    fun findByPointIdAndApprovalOrCancel(pointId: Long) : List<FreePointSnapshotEntity>
+    fun findByPointIdAndApprovalOrCancelWithLock(pointId: Long) : List<FreePointSnapshotEntity>
+
+    fun findOnlyApprovalByMemberIdAndOrderIdWithLock(memberId: Long, orderId: String) : List<FreePointSnapshotEntity>
 }

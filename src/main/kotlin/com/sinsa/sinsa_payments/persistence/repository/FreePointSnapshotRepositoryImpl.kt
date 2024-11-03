@@ -14,14 +14,12 @@ class FreePointSnapshotRepositoryImpl(
 ) : QuerydslRepositorySupport(FreePointSnapshotEntity::class.java),
     FreePointSnapshotRepositoryCustom {
     override fun findByPointId(pointId: Long): List<FreePointSnapshotEntity> {
-        return queryFactory.select(freePointSnapshotEntity)
-            .from(freePointSnapshotEntity)
+        return from(freePointSnapshotEntity)
             .where(freePointSnapshotEntity.pointId.eq(pointId))
-            .setLockMode(LockModeType.PESSIMISTIC_READ)
             .fetch()
     }
 
-    override fun findByPointIdAndApprovalOrCancel(pointId: Long): List<FreePointSnapshotEntity> {
+    override fun findByPointIdAndApprovalOrCancelWithLock(pointId: Long): List<FreePointSnapshotEntity> {
         return queryFactory.select(freePointSnapshotEntity)
             .from(freePointSnapshotEntity)
             .where(
@@ -34,4 +32,20 @@ class FreePointSnapshotRepositoryImpl(
             .setLockMode(LockModeType.PESSIMISTIC_READ)
             .fetch()
     }
+
+    override fun findOnlyApprovalByMemberIdAndOrderIdWithLock(memberId: Long, orderId: String): List<FreePointSnapshotEntity> {
+        return queryFactory.select(freePointSnapshotEntity)
+            .from(freePointSnapshotEntity)
+            .where(
+                freePointSnapshotEntity.approvalKey.isNull
+                    .and(freePointSnapshotEntity.memberId.eq(memberId))
+                    .and(freePointSnapshotEntity.orderId.eq(orderId))
+                    .and(freePointSnapshotEntity.status.eq(FreePointSnapshotStatus.APPROVAL))
+
+            )
+            .orderBy(freePointSnapshotEntity.id.asc())
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+            .fetch()
+    }
+
 }
