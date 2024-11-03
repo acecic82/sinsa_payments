@@ -16,6 +16,8 @@ enum class ExceptionCode(
     FREE_POINT_HELD_TOO_MUCH("적립된 포인트가 많아 적립할 수 없습니다."),
     FREE_POINT_ALREADY_USED("적립된 포인트 일부가 사용되어 취소할 수 없습니다."),
     FREE_POINT_NOT_FOUND("적립된 포인트 정보를 찾을 수 없습니다 PointId : "),
+    FREE_POINT_APPROVAL_TOO_MUCH("사용하려는 포인트가 보유한 포인트보다 많습니다."),
+    FREE_POINT_CANCEL_TOO_MUCH("취소하려는 포인트가 사용한 포인트보다 많습니다."),
 
     //Redis
     POINT_POLICY_REDIS_SETTING_FAIL("레디스 setting 에 실패하였습니다."),
