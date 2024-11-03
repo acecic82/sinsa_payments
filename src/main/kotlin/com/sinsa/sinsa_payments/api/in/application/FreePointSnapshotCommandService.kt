@@ -58,6 +58,8 @@ class FreePointSnapshotCommandService (
 
     @Transactional
     override fun cancel(freePointTransactionVO: FreePointTransactionVO) {
+
+        // 사용한것들 중 취소가 없는 건에 대해서만 가져온다 즉, 취소할 수 있는 모든 케이스를 memberId, OrderId 기준으로 가져온다.
         val freePointSnapshots = findFreePointSnapshotPort.findOnlyApprovalByMemberIdAndOrderId(
             freePointTransactionVO.memberId,
             freePointTransactionVO.orderId
@@ -76,9 +78,11 @@ class FreePointSnapshotCommandService (
     private fun cancelFreePoint(freePointSnapshots: List<FreePointSnapshot>, totalPoint: BigDecimal) : BigDecimal {
         var initPoint = totalPoint
 
+        // 취소하려는 금액을 기준으로 취소 가능한 건들의 금액을 차례로 뺴가면서 진행한다.
         freePointSnapshots.forEach {
             val currentPoint = it.point
 
+            //아직 취소할 돈이 남아 있는 경우
             if(currentPoint < initPoint) {
                 initPoint = initPoint.minus(currentPoint)
 
@@ -87,10 +91,13 @@ class FreePointSnapshotCommandService (
 
                 saveFreePointAndSnapshotOnlyCancel(it, currentPoint)
             }
+            //취소할 돈이 현재 승인 건보다 적은 경우 혹은 딱 맞는 경우(마지막 케이스)
             else {
                 val newRemainPoint = currentPoint.minus(initPoint)
                 it.setApprovalKey(it.id!!)
 
+                // 만약 취소하려는 돈이 승인된 건보다 작은 경우 새로운 approval 을 만든다
+                // 예시 승인건 500원 취소하려는 금액 300원인 경우 300원으로 만들고 200원을 새로 쌓는다
                 if(BigDecimal.ZERO < newRemainPoint) {
                     newApprovalFreePointSnapshot(it, newRemainPoint)
                     it.setFreePoint(initPoint)
@@ -103,6 +110,7 @@ class FreePointSnapshotCommandService (
             }
         }
 
+        // 모든 취소 가능한 승인건들에 대해서 취소했지만, 취소하려는 금액이 더 큰 경우(Exception Case)
         return initPoint
     }
 
