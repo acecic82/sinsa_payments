@@ -42,6 +42,9 @@
 ## ERD
 [ERD](ERD.md) 를 참고 해주세요
 
-## Setting
+### Redis 활용처
+[REDIS](REDIS.md) 를 참고 해주세요
+
+### Setting
 application.yml 파일에 spring.jpa.hibernate.ddl-auto 가 create 로 되어있어 서버 재 시작시 테이블이 날라갑니다\
 h2Database 사용으로 컴퓨터에 h2Database 가 설치 되어 있어야 합니다.
