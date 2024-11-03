@@ -29,6 +29,7 @@ CREATE TABLE free_point_snapshot (
                         point_id bigint,
                         order_id varchar(255),
                         point numeric(38,0) not null,
+                        approval_key bigint,
                         free_point_snapshot_status enum('ACCUMULATED', 'ACCUMULATED_CANCEL', 'APPROVAL', 'CANCEL', 'EXPIRE') NOT NULL,
                         primary key (id)
 );

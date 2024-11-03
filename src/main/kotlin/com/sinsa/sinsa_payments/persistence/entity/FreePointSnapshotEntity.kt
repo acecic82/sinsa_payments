@@ -16,26 +16,29 @@ data class FreePointSnapshotEntity(
     val pointId: Long,
     val orderId: String? = null,
     val point: BigDecimal,
+    val approvalKey: Long? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "free_point_snapshot_status")
     val status: FreePointSnapshotStatus
 ) {
-    fun toDomain() = FreePointSnapshot(
+    fun toDomain() = FreePointSnapshot (
         id = this.id,
         memberId = this.memberId,
         pointId = this.pointId,
         orderId = this.orderId,
         point = this.point,
+        approvalKey = this.approvalKey,
         status = this.status
     )
     companion object {
-        fun from(freePointSnapShot: FreePointSnapshot) = FreePointSnapshotEntity(
+        fun from(freePointSnapShot: FreePointSnapshot) = FreePointSnapshotEntity (
             id = freePointSnapShot.id,
             memberId = freePointSnapShot.memberId,
             pointId = freePointSnapShot.pointId,
             orderId = freePointSnapShot.orderId,
             point = freePointSnapShot.point,
+            approvalKey = freePointSnapShot.approvalKey,
             status = freePointSnapShot.status
         )
     }
