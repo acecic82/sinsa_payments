@@ -14,6 +14,10 @@ data class FreePoint(
         this.point = this.point.minus(point)
     }
 
+    fun recoverPoint(point: BigDecimal) {
+        this.point = this.point.plus(point)
+    }
+
     companion object {
         const val DEFAULT_EXPIRED_DAY = 365L
     }
