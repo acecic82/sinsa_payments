@@ -111,6 +111,13 @@ class FreePointCommandService (
     }
 
     private fun checkMaxPoint(point: BigDecimal) {
+        if (point <= BigDecimal.ZERO) {
+            throw FreePointException(
+                ExceptionCode.FREE_POINT_LESS_OR_EQUAL_ZERO,
+                ExceptionCode.FREE_POINT_LESS_OR_EQUAL_ZERO.message
+            )
+        }
+
         val redisValue = findRedisUseCase.findMaxAccumulatedPoint()
 
         if (redisValue < point) {

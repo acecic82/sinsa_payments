@@ -27,7 +27,14 @@ class FreePointSnapshotCommandService (
 ) : SaveFreePointSnapshotUseCase {
 
     @Transactional
-    override fun save(freePointUseVO: FreePointTransactionVO) {
+    override fun use(freePointUseVO: FreePointTransactionVO) {
+        if (freePointUseVO.point <= BigDecimal.ZERO) {
+            throw FreePointException(
+                ExceptionCode.FREE_POINT_LESS_OR_EQUAL_ZERO,
+                ExceptionCode.FREE_POINT_LESS_OR_EQUAL_ZERO.message
+            )
+        }
+
         val now = LocalDateTime.now()
 
         val manualFreePoints =
@@ -58,6 +65,12 @@ class FreePointSnapshotCommandService (
 
     @Transactional
     override fun cancel(freePointTransactionVO: FreePointTransactionVO) {
+        if (freePointTransactionVO.point <= BigDecimal.ZERO) {
+            throw FreePointException(
+                ExceptionCode.FREE_POINT_LESS_OR_EQUAL_ZERO,
+                ExceptionCode.FREE_POINT_LESS_OR_EQUAL_ZERO.message
+            )
+        }
 
         // 사용한것들 중 취소가 없는 건에 대해서만 가져온다 즉, 취소할 수 있는 모든 케이스를 memberId, OrderId 기준으로 가져온다.
         val freePointSnapshots = findFreePointSnapshotPort.findOnlyApprovalByMemberIdAndOrderId(

@@ -25,7 +25,7 @@ data class PointPolicy(
     }
 
     fun changMaxHeldPoint(point: BigDecimal) {
-        this.maxAccumulatedPoint = point
+        this.maxHeldPoint = point
     }
 
     fun changDayOfExpiredDate(days: Long) {

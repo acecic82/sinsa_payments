@@ -9,6 +9,7 @@ enum class ExceptionCode(
     POINT_POLICY_INVALID_DAY_OF_EXPIRED_DATE("유효하지 않은 만료일 저장 요청되었습니다 Days : "),
 
     //Free_Point
+    FREE_POINT_LESS_OR_EQUAL_ZERO("요청 포인트가 0 이하입니다."),
     FREE_POINT_ACCUMULATED_TOO_MUCH("적립 요청한 포인트가 1회 적립 가능한 포인트보다 많습니다. Point : "),
     FREE_POINT_HELD_TOO_MUCH("적립된 포인트가 많아 적립할 수 없습니다."),
     FREE_POINT_ALREADY_USED("적립된 포인트 일부가 사용되어 취소할 수 없습니다."),

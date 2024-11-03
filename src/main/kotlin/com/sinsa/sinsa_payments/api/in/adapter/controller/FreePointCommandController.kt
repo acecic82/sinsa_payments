@@ -36,7 +36,7 @@ class FreePointCommandController(
     fun use(
         @RequestBody freePointUseDTO : FreePointTransactionDTO
     ) : SuccessResponseDTO<Boolean> {
-        saveFreePointSnapshotUseCase.save(freePointUseDTO.toVO())
+        saveFreePointSnapshotUseCase.use(freePointUseDTO.toVO())
         return SuccessResponseDTO.success(true)
     }
 
