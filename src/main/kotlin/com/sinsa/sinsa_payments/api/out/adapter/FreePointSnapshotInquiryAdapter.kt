@@ -16,7 +16,13 @@ class FreePointSnapshotInquiryAdapter (
     }
 
     override fun findByPointIdWithApprovalAndCancel(pointId: Long): List<FreePointSnapshot> {
-        return freePointSnapshotRepository.findByPointIdAndApprovalOrCancel(pointId).map {
+        return freePointSnapshotRepository.findByPointIdAndApprovalOrCancelWithLock(pointId).map {
+            it.toDomain()
+        }
+    }
+
+    override fun findOnlyApprovalByMemberIdAndOrderId(memberId: Long, orderId: String): List<FreePointSnapshot> {
+        return freePointSnapshotRepository.findOnlyApprovalByMemberIdAndOrderIdWithLock(memberId, orderId).map {
             it.toDomain()
         }
     }
