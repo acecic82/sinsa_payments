@@ -1,7 +1,7 @@
 package com.sinsa.sinsa_payments.api.`in`.adapter.controller
 
 import com.sinsa.sinsa_payments.api.`in`.adapter.dto.FreePointDTO
-import com.sinsa.sinsa_payments.api.`in`.adapter.dto.FreePointUseDTO
+import com.sinsa.sinsa_payments.api.`in`.adapter.dto.FreePointTransactionDTO
 import com.sinsa.sinsa_payments.api.`in`.port.SaveFreePointSnapshotUseCase
 import com.sinsa.sinsa_payments.api.`in`.port.SaveFreePointUseCase
 import com.sinsa.sinsa_payments.common.dto.SuccessResponseDTO
@@ -34,9 +34,17 @@ class FreePointCommandController(
 
     @PostMapping("/use")
     fun use(
-        @RequestBody freePointUseDTO : FreePointUseDTO
+        @RequestBody freePointUseDTO : FreePointTransactionDTO
     ) : SuccessResponseDTO<Boolean> {
         saveFreePointSnapshotUseCase.save(freePointUseDTO.toVO())
+        return SuccessResponseDTO.success(true)
+    }
+
+    @PostMapping("/use-cancel")
+    fun useCancel(
+        @RequestBody freePointUseDTO : FreePointTransactionDTO
+    ) : SuccessResponseDTO<Boolean> {
+        saveFreePointSnapshotUseCase.cancel(freePointUseDTO.toVO())
         return SuccessResponseDTO.success(true)
     }
 }
