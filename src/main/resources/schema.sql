@@ -19,7 +19,8 @@ CREATE TABLE free_point (
                         primary key (id)
 );
 
--- create INDEX idx_free_point_expired on free_point(expired_date);
+create INDEX idx_free_point_expired on free_point(expired_date);
+create INDEX idx_free_point_member_expired on free_point(member_id, expired_date);
 
 DROP TABLE IF EXISTS free_point_snapshot;
 
@@ -33,3 +34,7 @@ CREATE TABLE free_point_snapshot (
                         free_point_snapshot_status enum('ACCUMULATED', 'ACCUMULATED_CANCEL', 'APPROVAL', 'CANCEL', 'EXPIRE') NOT NULL,
                         primary key (id)
 );
+
+create INDEX idx_free_point_snapshot_1 on free_point_snapshot(point_id);
+create INDEX idx_free_point_snapshot_2 on free_point_snapshot(point_id, free_point_snapshot_status);
+create INDEX idx_free_point_snapshot_3 on free_point_snapshot(member_id, order_id, free_point_snapshot_status);
