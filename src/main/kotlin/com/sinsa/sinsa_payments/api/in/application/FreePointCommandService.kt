@@ -60,6 +60,14 @@ class FreePointCommandService (
                 ExceptionCode.FREE_POINT_NOT_FOUND,
                 "${ExceptionCode.FREE_POINT_NOT_FOUND}$pointId"
             )
+
+        if (LocalDateTime.now().isAfter(freePoint.expiredDate)) {
+            throw FreePointException(
+                ExceptionCode.FREE_POINT_ALREADY_EXPIRE,
+                ExceptionCode.FREE_POINT_ALREADY_EXPIRE.message
+            )
+        }
+
         val targetPoint = freePoint.point
 
         // 다 사용하여 취소 처리를 한다.
