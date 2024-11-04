@@ -55,6 +55,24 @@ data class PointPolicyDTO (
 
 ---
 
+#### GET
+(pointId 를 토대로 point 사용의 history 를 가져오는 API)\
+input :
+```kotlin
+val pointId: Long
+```
+output :
+```kotlin
+List<FreePointSnapshotDTO>
+data class FreePointSnapshotDTO(
+    val pointId: Long,
+    val orderId: String? = null,
+    var point: BigDecimal,
+    val status: String
+)
+```
+/api/v1/admin/history
+
 ### Free-Point
 
 
