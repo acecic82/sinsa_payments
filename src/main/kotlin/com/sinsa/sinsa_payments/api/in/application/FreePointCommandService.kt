@@ -30,13 +30,17 @@ class FreePointCommandService (
         checkMaxPoint(freePoint.point)
         val now = LocalDateTime.now()
 
+        //만료 되지 않은 적립 금액만 가져온다
         val freePoints = findFreePointPort.findFreePointsByMemberId(freePoint.memberId, now)
         val totalHeldPoint = freePoints.sumOf { it.point }
 
+        //요청 금액 + 현재 적립금액이 정책에 설정된 보유 금액을 넘는지 확인한다.
         checkMaxHeldPoint(totalHeldPoint + freePoint.point)
+        //정책에 설정된 만료일을 토대로 만료일을 설정하고 저장한다.
         val expiredDate = now.plusDays(findRedisUseCase.findExpiredDate())
         val savedFreePoint = saveFreePointPort.save(freePoint.toDomain(expiredDate))
 
+        //snapshot 에 ACCUMULATED 로 저장한다.
         saveFreePointSnapshotPort.save(
             FreePointSnapshot.from(
                 savedFreePoint.memberId,
@@ -111,6 +115,7 @@ class FreePointCommandService (
     }
 
     private fun checkMaxPoint(point: BigDecimal) {
+        // 0 이하의 요청은 이상한 요청으로 간주한다.
         if (point <= BigDecimal.ZERO) {
             throw FreePointException(
                 ExceptionCode.FREE_POINT_LESS_OR_EQUAL_ZERO,
@@ -120,6 +125,7 @@ class FreePointCommandService (
 
         val redisValue = findRedisUseCase.findMaxAccumulatedPoint()
 
+        //정책에서 설정한 1회 최대 적립금액보다 많다면 exception 을 발생시킨다.
         if (redisValue < point) {
             throw FreePointException(
                 ExceptionCode.FREE_POINT_ACCUMULATED_TOO_MUCH,
