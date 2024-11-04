@@ -21,6 +21,7 @@ class PointPolicyCommandService (
     override fun saveMaxAccumulatedPoint(point: Long) : PointPolicyVO {
         val pointPolicy = findLatestPointPolicy()
 
+        //제한보다 높은 값으로 셋팅 요청이 들어왔는지 확인한다.
         require(pointPolicy.checkValidationMaxAccumulatedPoint(point)) {
             throw PointPolicyException(
                 ExceptionCode.POINT_POLICY_INVALID_ACCUMULATED,
@@ -34,6 +35,7 @@ class PointPolicyCommandService (
         redisService.set(PointPolicy.REDIS_MAX_ACCUMULATED_POINT_KEY_NAME, point.toString())
         val afterSetRedis = redisService.get(PointPolicy.REDIS_MAX_ACCUMULATED_POINT_KEY_NAME)
 
+        // redis 에 잘 들어가있는지 다시 확인한다.
         require(afterSetRedis.compareTo(point.toString()) == 0) {
             throw PointPolicyException(
                 ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL,
@@ -47,6 +49,7 @@ class PointPolicyCommandService (
     override fun saveMaxHeldPoint(point: Long) : PointPolicyVO {
         val pointPolicy = findLatestPointPolicy()
 
+        //제한보다 높은 값으로 셋팅 요청이 들어왔는지 확인한다.
         require(pointPolicy.checkValidationMaxHeldPoint(point)) {
             throw PointPolicyException(
                 ExceptionCode.POINT_POLICY_INVALID_HELD,
@@ -60,6 +63,7 @@ class PointPolicyCommandService (
         redisService.set(PointPolicy.REDIS_MAX_HELD_POINT_KEY_NAME, point.toString())
         val afterSetRedis = redisService.get(PointPolicy.REDIS_MAX_HELD_POINT_KEY_NAME)
 
+        // redis 에 잘 들어가있는지 다시 확인한다.
         require(afterSetRedis.compareTo(point.toString()) == 0) {
             throw PointPolicyException(
                 ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL,
@@ -73,6 +77,7 @@ class PointPolicyCommandService (
     override fun saveExpiredDateOfDay(days: Long): PointPolicyVO {
         val pointPolicy = findLatestPointPolicy()
 
+        //제한보다 높은 값으로 셋팅 요청이 들어왔는지 확인한다.
         require(pointPolicy.checkValidationDayOfExpiredDate(days)) {
             throw PointPolicyException(
                 ExceptionCode.POINT_POLICY_INVALID_DAY_OF_EXPIRED_DATE,
@@ -86,7 +91,8 @@ class PointPolicyCommandService (
         redisService.set(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME, days.toString())
         val afterSetRedis = redisService.get(PointPolicy.REDIS_DAY_OR_EXPIRED_DATE_KEY_NAME)
 
-            require(afterSetRedis.compareTo(days.toString()) == 0) {
+        // redis 에 잘 들어가있는지 다시 확인한다.
+        require(afterSetRedis.compareTo(days.toString()) == 0) {
             throw PointPolicyException(
                 ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL,
                 ExceptionCode.POINT_POLICY_REDIS_SETTING_FAIL.message
