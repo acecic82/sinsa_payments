@@ -56,6 +56,7 @@ class FreePointCommandService (
 
     @Transactional
     override fun cancel(pointId: Long) : FreePointVO {
+        //snapshot 에서 pointId를 기준으로 승인, 취소 데이터를 가져온다
         val snapShots = findFreePointSnapshotPort.findByPointIdWithApprovalAndCancel(pointId)
         checkValidFreePointSnapshot(snapShots)
 
@@ -65,6 +66,7 @@ class FreePointCommandService (
                 "${ExceptionCode.FREE_POINT_NOT_FOUND}$pointId"
             )
 
+        //이미 만료된 point 라면 취소를 못하게 한다.
         if (LocalDateTime.now().isAfter(freePoint.expiredDate)) {
             throw FreePointException(
                 ExceptionCode.FREE_POINT_ALREADY_EXPIRE,
@@ -95,6 +97,8 @@ class FreePointCommandService (
     private fun checkValidFreePointSnapshot(snapShots : List<FreePointSnapshot>) {
         val totalPoint = snapShots.sumOf { it.point }
 
+        //가져온 데이터를 토대로 사용한 적이 있는지 확인한다.
+        //사용은 하였지만, 취소를 하여 합한 값이 0이라면 취소 가능한것으로 본다.
         if (totalPoint != BigDecimal.ZERO) {
             throw FreePointException(
                 ExceptionCode.FREE_POINT_ALREADY_USED,
