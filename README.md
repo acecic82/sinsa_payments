@@ -48,3 +48,9 @@
 ### Setting
 application.yml 파일에 spring.jpa.hibernate.ddl-auto 가 create 로 되어있어 서버 재 시작시 테이블이 날라갑니다\
 h2Database 사용으로 컴퓨터에 h2Database 가 설치 되어 있어야 합니다.
+
+### 아쉬운 부분
+
+- Spring Security 를 이용하여 인가를 하면 더 좋을것 같다.
+- 중간에 구조를 갈아엎느라 Service 의 테스트코드를 작성하지 못했다.
+- Schedule 로 만료가 있는지 확인하고 업데이트 하는 처리를 했지만, Spring Batch 가 더 적합할 것이다.
