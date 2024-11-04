@@ -9,4 +9,6 @@ interface FindFreePointPort {
     fun findFreePointsByMemberIdAndManual(memberId: Long, manual: Boolean, expiredDate: LocalDateTime) : List<FreePoint>
 
     fun findByIdWithLock(pointId: Long) : FreePoint?
+
+    fun findExpiredFreePoint(expiredDate: LocalDateTime) : List<FreePoint>
 }

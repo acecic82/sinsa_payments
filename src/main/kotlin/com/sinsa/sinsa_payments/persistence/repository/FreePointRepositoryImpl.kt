@@ -49,4 +49,12 @@ class FreePointRepositoryImpl(
             .setLockMode(LockModeType.PESSIMISTIC_READ)
             .fetch()
     }
+
+    override fun findExpiredFreePoint(expiredDateTime: LocalDateTime): List<FreePointEntity> {
+        return queryFactory.select(freePointEntity)
+            .from(freePointEntity)
+            .where(freePointEntity.expiredDate.lt(expiredDateTime).and(freePointEntity.point.gt(BigDecimal.ZERO)))
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+            .fetch()
+    }
 }

@@ -18,4 +18,6 @@ interface  FreePointRepositoryCustom {
         manual: Boolean,
         expiredDateTime: LocalDateTime
     ): List<FreePointEntity>
+
+    fun findExpiredFreePoint(expiredDateTime: LocalDateTime): List<FreePointEntity>
 }

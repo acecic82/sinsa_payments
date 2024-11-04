@@ -29,4 +29,10 @@ class FreePointInquiryAdapter (
     override fun findByIdWithLock(pointId: Long): FreePoint? {
         return freePointRepository.findByIdWithLock(pointId)?.toDomain()
     }
+
+    override fun findExpiredFreePoint(expiredDate: LocalDateTime): List<FreePoint> {
+        return freePointRepository.findExpiredFreePoint(expiredDate).map {
+            it.toDomain()
+        }
+    }
 }
