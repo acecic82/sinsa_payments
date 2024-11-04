@@ -28,6 +28,7 @@ class FreePointSnapshotCommandService (
 
     @Transactional
     override fun use(freePointUseVO: FreePointTransactionVO) {
+        //0원 이하 사용은 이상한 사용으로 판단한다.
         if (freePointUseVO.point <= BigDecimal.ZERO) {
             throw FreePointException(
                 ExceptionCode.FREE_POINT_LESS_OR_EQUAL_ZERO,
@@ -37,6 +38,7 @@ class FreePointSnapshotCommandService (
 
         val now = LocalDateTime.now()
 
+        // 수기 지급건부터 가져온다.
         val manualFreePoints =
             findFreePointPort.findFreePointsByMemberIdAndManual(freePointUseVO.memberId, true, now)
 
@@ -185,15 +187,19 @@ class FreePointSnapshotCommandService (
     private fun useFreePoint(freePoints: List<FreePoint>, totalPoint: BigDecimal, orderId: String) : BigDecimal {
         var initTotalPoint = totalPoint
 
+        //포인트의 건수마다 차감하면서 사용한다.
         freePoints.forEach {
             val currentPoint = it.point
 
+            //차감할 포인트가 더 크다면 전체를 차감한다.
             if(currentPoint < initTotalPoint) {
                 initTotalPoint = initTotalPoint.minus(currentPoint)
 
                 saveFreePointAndSnapshotOnlyApproval(it, orderId, currentPoint)
 
-            } else {
+            }
+            // 차감할 포인트가 같거나 더 적다면 마지막으로 차감해야할 포인트를 차감하고 끝낸다.
+            else {
                 saveFreePointAndSnapshotOnlyApproval(it, orderId, initTotalPoint)
 
                 return BigDecimal.ZERO
