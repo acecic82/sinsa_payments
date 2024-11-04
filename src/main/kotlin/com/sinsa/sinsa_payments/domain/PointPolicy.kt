@@ -34,9 +34,9 @@ data class PointPolicy(
 
     companion object {
         const val DEFAULT_MAX_ACCUMULATED_POINT = 100_000L
+        //요구사항엔 없지만, 무제한은 안될것 같아 넣었습니다.
         const val DEFAULT_MAX_HELD_POINT = 1_000_000L
         const val DEFAULT_MAX_DAY_OF_EXPIRED_DATE = 365L * 5
-        const val DEFAULT_DAY_OF_EXPIRED_DATE = 365L
 
         const val REDIS_MAX_ACCUMULATED_POINT_KEY_NAME = "PointPolicyMaxAccumulatedPointKey"
         const val REDIS_MAX_HELD_POINT_KEY_NAME = "PointPolicyMaxHeldPointKey"
