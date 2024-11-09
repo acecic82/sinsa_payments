@@ -46,7 +46,7 @@ class FreePointRepositoryImpl(
                 freePointEntity.manual.eq(manual)).and(freePointEntity.expiredDate.gt(expiredDateTime).and(
                 freePointEntity.point.gt(BigDecimal.ZERO))))
             .orderBy(freePointEntity.expiredDate.asc())
-            .setLockMode(LockModeType.PESSIMISTIC_READ)
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .fetch()
     }
 
