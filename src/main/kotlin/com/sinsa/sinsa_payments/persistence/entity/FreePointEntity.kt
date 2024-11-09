@@ -12,9 +12,11 @@ data class FreePointEntity (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @Column(name = "member_id")
     val memberId: Long,
     val point: BigDecimal,
     val manual: Boolean,
+    @Column(name = "expired_date")
     val expiredDate: LocalDateTime
 ) {
     fun toDomain() = FreePoint(

@@ -12,10 +12,14 @@ data class FreePointSnapshotEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @Column(name = "member_id")
     val memberId: Long,
+    @Column(name = "point_id")
     val pointId: Long,
+    @Column(name = "order_id")
     val orderId: String? = null,
     val point: BigDecimal,
+    @Column(name = "approval_key")
     val approvalKey: Long? = null,
 
     @Enumerated(EnumType.STRING)

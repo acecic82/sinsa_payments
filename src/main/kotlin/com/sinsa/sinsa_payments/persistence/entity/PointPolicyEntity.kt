@@ -11,8 +11,11 @@ data class PointPolicyEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @Column(name = "max_accumulated_point")
     val maxAccumulatedPoint: BigDecimal,
+    @Column(name = "max_held_point")
     val maxHeldPoint: BigDecimal,
+    @Column(name = "day_of_expired_date")
     val dayOfExpiredDate: Long
 ) {
     fun toDomain() = PointPolicy(
