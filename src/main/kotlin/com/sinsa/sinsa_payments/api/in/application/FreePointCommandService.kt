@@ -11,6 +11,7 @@ import com.sinsa.sinsa_payments.common.exception.FreePointException
 import com.sinsa.sinsa_payments.common.exception.enum.ExceptionCode
 import com.sinsa.sinsa_payments.domain.FreePointSnapshot
 import com.sinsa.sinsa_payments.domain.FreePointSnapshotStatus
+import mu.KLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
@@ -57,8 +58,10 @@ class FreePointCommandService (
     @Transactional
     override fun cancel(pointId: Long) : FreePointVO {
         //snapshot 에서 pointId를 기준으로 승인, 취소 데이터를 가져온다
-        val snapShots = findFreePointSnapshotPort.findByPointIdWithApprovalAndCancel(pointId)
-        checkValidFreePointSnapshot(snapShots)
+        logger.info("Start cancel ${System.currentTimeMillis()}")
+
+
+//        checkValidFreePointSnapshot(pointId)
 
         val freePoint = findFreePointPort.findByIdWithLock(pointId) ?:
             throw FreePointException(
@@ -80,6 +83,7 @@ class FreePointCommandService (
         freePoint.usePoint(targetPoint)
         val savedFreePoint = saveFreePointPort.save(freePoint)
 
+
         // snapshot 에 적립취소 상태를 저장한다.
         saveFreePointSnapshotPort.save(
             FreePointSnapshot.from(
@@ -91,10 +95,14 @@ class FreePointCommandService (
             )
         )
 
+
         return FreePointVO.from(savedFreePoint)
     }
 
-    private fun checkValidFreePointSnapshot(snapShots : List<FreePointSnapshot>) {
+    @Transactional
+    override fun checkValidFreePointSnapshot(pointId: Long) {
+        logger.info("check valid start")
+        val snapShots = findFreePointSnapshotPort.findByPointIdWithApprovalAndCancel(pointId)
         val totalPoint = snapShots.sumOf { it.point }
 
         //가져온 데이터를 토대로 사용한 적이 있는지 확인한다.
@@ -137,4 +145,6 @@ class FreePointCommandService (
             )
         }
     }
+
+    companion object : KLogging()
 }

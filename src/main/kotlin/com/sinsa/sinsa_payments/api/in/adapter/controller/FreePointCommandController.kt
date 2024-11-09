@@ -29,6 +29,7 @@ class FreePointCommandController(
     fun cancel(
         @RequestParam pointId: Long
     ) : SuccessResponseDTO<FreePointDTO> {
+        saveFreePointUseCase.checkValidFreePointSnapshot(pointId)
         return SuccessResponseDTO.success(FreePointDTO.from(saveFreePointUseCase.cancel(pointId)))
     }
 

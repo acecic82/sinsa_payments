@@ -12,6 +12,7 @@ import com.sinsa.sinsa_payments.common.exception.enum.ExceptionCode
 import com.sinsa.sinsa_payments.domain.FreePoint
 import com.sinsa.sinsa_payments.domain.FreePointSnapshot
 import com.sinsa.sinsa_payments.domain.FreePointSnapshotStatus
+import mu.KLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
@@ -224,4 +225,6 @@ class FreePointSnapshotCommandService (
 
         saveFreePointPort.save(freePoint)
     }
+
+    companion object : KLogging()
 }

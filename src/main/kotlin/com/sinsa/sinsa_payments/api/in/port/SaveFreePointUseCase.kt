@@ -6,4 +6,6 @@ interface SaveFreePointUseCase {
     fun save(freePoint: FreePointVO) : FreePointVO
 
     fun cancel(pointId: Long) : FreePointVO
+
+    fun checkValidFreePointSnapshot(pointId: Long)
 }
