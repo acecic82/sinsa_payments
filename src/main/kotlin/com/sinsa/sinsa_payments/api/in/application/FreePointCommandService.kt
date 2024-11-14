@@ -61,7 +61,7 @@ class FreePointCommandService (
         logger.info("Start cancel ${System.currentTimeMillis()}")
 
 
-//        checkValidFreePointSnapshot(pointId)
+        checkValidFreePointSnapshot(pointId)
 
         val freePoint = findFreePointPort.findByIdWithLock(pointId) ?:
             throw FreePointException(

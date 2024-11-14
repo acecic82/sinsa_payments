@@ -197,7 +197,6 @@ class FreePointSnapshotCommandService (
                 initTotalPoint = initTotalPoint.minus(currentPoint)
 
                 saveFreePointAndSnapshotOnlyApproval(it, orderId, currentPoint)
-
             }
             // 차감할 포인트가 같거나 더 적다면 마지막으로 차감해야할 포인트를 차감하고 끝낸다.
             else {
