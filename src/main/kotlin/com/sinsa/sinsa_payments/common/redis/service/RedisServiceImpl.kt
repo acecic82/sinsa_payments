@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 import java.time.Duration
 
 @Service
-class RedisServiceImp<T>(
+class RedisServiceImpl<T>(
     val redissonClient : RedissonClient
 ) : RedisService<T> {
     override fun get(key: String): T {
