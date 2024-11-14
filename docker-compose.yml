@@ -31,9 +31,6 @@ services:
       - "6380:6379"
     command:
       - "redis-server"
-#    volumes: # 마운트할 볼륨 설정
-#      - ${REDIS_DATA_PATH}:/data
-#      - ${REDIS_DEFAULT_CONFIG_FILE}:/usr/local/etc/redis/redis.conf
     networks:
       - point-network
     restart: always
