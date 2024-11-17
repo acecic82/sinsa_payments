@@ -49,6 +49,17 @@
 application.yml 파일에 spring.jpa.hibernate.ddl-auto 가 create 로 되어있어 서버 재 시작시 테이블이 날라갑니다\
 h2Database 사용으로 컴퓨터에 h2Database 가 설치 되어 있어야 합니다.
 
+### DB read-write 분리
+
+DB를 read db, write db 를 분리하여 read 작업은 read db만 할 수 있게 개선
+write db 부하 감소
+
+readDB : 3308 port (docker)
+writeDB : 3307 port (docker)
+
+TODO
+docker-compose 파일에도 반영 필요
+
 ### 아쉬운 부분
 
 - Spring Security 를 이용하여 인가를 하면 더 좋을것 같다.
