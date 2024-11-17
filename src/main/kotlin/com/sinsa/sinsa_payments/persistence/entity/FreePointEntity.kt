@@ -14,7 +14,7 @@ data class FreePointEntity (
 
     @Column(name = "member_id")
     val memberId: Long,
-    val point: BigDecimal,
+    val point: Long,
     val manual: Boolean,
     @Column(name = "expired_date")
     val expiredDate: LocalDateTime
@@ -22,7 +22,7 @@ data class FreePointEntity (
     fun toDomain() = FreePoint(
         id = this.id,
         memberId = this.memberId,
-        point = this.point,
+        point = BigDecimal(this.point),
         manual = this.manual,
         expiredDate = this.expiredDate
     )
@@ -31,7 +31,7 @@ data class FreePointEntity (
         fun from(freePoint: FreePoint) = FreePointEntity(
             id = freePoint.id,
             memberId = freePoint.memberId,
-            point = freePoint.point,
+            point = freePoint.point.toLong(),
             manual = freePoint.manual,
             expiredDate = freePoint.expiredDate
         )

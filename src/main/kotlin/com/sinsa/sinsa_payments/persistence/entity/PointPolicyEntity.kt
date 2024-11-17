@@ -12,23 +12,23 @@ data class PointPolicyEntity(
     val id: Long? = null,
 
     @Column(name = "max_accumulated_point")
-    val maxAccumulatedPoint: BigDecimal,
+    val maxAccumulatedPoint: Long,
     @Column(name = "max_held_point")
-    val maxHeldPoint: BigDecimal,
+    val maxHeldPoint: Long,
     @Column(name = "day_of_expired_date")
     val dayOfExpiredDate: Long
 ) {
     fun toDomain() = PointPolicy(
         id = this.id,
-        maxAccumulatedPoint = this.maxAccumulatedPoint,
-        maxHeldPoint = this.maxHeldPoint,
+        maxAccumulatedPoint = BigDecimal(this.maxAccumulatedPoint),
+        maxHeldPoint = BigDecimal(this.maxHeldPoint),
         dayOfExpiredDate = this.dayOfExpiredDate
     )
     companion object {
         fun from(pointPolicy: PointPolicy) = PointPolicyEntity(
             id = pointPolicy.id,
-            maxAccumulatedPoint = pointPolicy.maxAccumulatedPoint,
-            maxHeldPoint = pointPolicy.maxHeldPoint,
+            maxAccumulatedPoint = pointPolicy.maxAccumulatedPoint.toLong(),
+            maxHeldPoint = pointPolicy.maxHeldPoint.toLong(),
             dayOfExpiredDate = pointPolicy.dayOfExpiredDate
         )
     }
