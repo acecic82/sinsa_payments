@@ -1,15 +1,16 @@
 package com.sinsa.sinsa_payments.persistence.configuration
 
-import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import jakarta.persistence.EntityManagerFactory
 import org.hibernate.cfg.AvailableSettings
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.DependsOn
 import org.springframework.context.annotation.Primary
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
@@ -18,6 +19,7 @@ import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
+
 
 const val PACKAGE_NAME = "com.sinsa.sinsa_payments"
 @Configuration
@@ -31,26 +33,55 @@ const val PACKAGE_NAME = "com.sinsa.sinsa_payments"
 @EnableJpaAuditing
 class DataSourceConfig {
     @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.write")
+    fun writeDataSource() : HikariDataSource {
+        return DataSourceBuilder.create().type(HikariDataSource::class.java).build()
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.read")
+    fun readDataSource() : HikariDataSource {
+        return DataSourceBuilder.create().type(HikariDataSource::class.java).build()
+    }
+
+    @Bean
+//    @Primary
+    @DependsOn(value = ["writeDataSource", "readDataSource"])
+    fun dataSource(
+        @Qualifier("writeDataSource") writeDataSource: HikariDataSource,
+        @Qualifier("readDataSource") readDataSource: HikariDataSource,
+    ): DataSource {
+        val dataSourceRouter = DataSourceRouter()
+
+        val dataSourceMap : HashMap<Any, Any> = HashMap()
+        dataSourceMap["write"] = writeDataSource
+        dataSourceMap["read"] = readDataSource
+        dataSourceRouter.setTargetDataSources(dataSourceMap)
+        dataSourceRouter.setDefaultTargetDataSource(writeDataSource)
+
+        return dataSourceRouter
+    }
+
+    @Bean
     @Primary
-    @ConfigurationProperties(prefix = "spring.datasource")
-    fun sinsaDataSourceProperty() : HikariConfig {
-        val result =  HikariConfig()
-        return result
+    @DependsOn(value = ["dataSource"])
+    fun lazyConnectionDataSource(
+        @Qualifier("dataSource") dataSource: DataSource
+    ): DataSource {
+        return LazyConnectionDataSourceProxy(dataSource)
     }
 
     @Bean
-    fun sinsaDataSource(): DataSource {
-        val data = HikariDataSource(sinsaDataSourceProperty())
-        return LazyConnectionDataSourceProxy(data)
-    }
-
-    @Bean
-    fun sinsaEntityManagerFactory(builder: EntityManagerFactoryBuilder): LocalContainerEntityManagerFactoryBean {
+    @DependsOn(value = ["lazyConnectionDataSource"])
+    fun sinsaEntityManagerFactory(
+        builder: EntityManagerFactoryBuilder,
+        @Qualifier("lazyConnectionDataSource") lazyConnectionDataSource: DataSource
+    ): LocalContainerEntityManagerFactoryBean {
         val properties = HashMap<String, String>()
         properties[AvailableSettings.USE_SECOND_LEVEL_CACHE] = "false"
         properties[AvailableSettings.USE_QUERY_CACHE] = "false"
 
-        return builder.dataSource(sinsaDataSource()).packages(PACKAGE_NAME).properties(properties).persistenceUnit("sinsa").build()
+        return builder.dataSource(lazyConnectionDataSource).packages(PACKAGE_NAME).properties(properties).persistenceUnit("sinsa").build()
     }
 
     @Primary
