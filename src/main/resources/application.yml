@@ -8,14 +8,25 @@ spring:
 #    password:
 #    driverClassName: org.h2.Driver
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    jdbc-url: jdbc:mysql://localhost:3307/mysql_write_point
-    username: root
-    password: "1234"
-    read-only: false
-    maximun-pool-size: 3
-    minimun-pool-size: 2
-    idle-timeout: 10000
+    read:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3308/mysql_write_point
+      username: root
+      password: "1234"
+      read-only: true
+      maximun-pool-size: 3
+      minimun-pool-size: 2
+      idle-timeout: 10000
+    write:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3307/mysql_write_point
+      username: root
+      password: "1234"
+      read-only: false
+      maximun-pool-size: 3
+      minimun-pool-size: 2
+      idle-timeout: 10000
+
   jpa:
     open-in-view: false
     properties:
